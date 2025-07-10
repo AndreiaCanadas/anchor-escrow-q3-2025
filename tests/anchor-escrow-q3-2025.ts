@@ -33,7 +33,7 @@ describe("anchor-escrow-q3-2025", () => {
 
   const seed = new anchor.BN(randomBytes(8));
   const amountA = new anchor.BN(1e9);
-  const amountB = new anchor.BN(1e9);
+  const amountB = new anchor.BN(5e9);
 
   const taker = Keypair.generate();
   let mintA: anchor.web3.PublicKey;
@@ -52,6 +52,13 @@ describe("anchor-escrow-q3-2025", () => {
     provider.publicKey.toBuffer(),
     seed.toArrayLike(Buffer, "le", 8),
   ], program.programId)[0];
+
+  it("Airdrop SOL to taker", async () => {
+    const tx = await connection.requestAirdrop(taker.publicKey, LAMPORTS_PER_SOL * 1);
+    await connection.confirmTransaction(tx);
+    console.log("\nAirdrop SOL to taker", tx);
+    console.log("Taker balance", (await connection.getBalance(taker.publicKey)));
+  })
 
   it("Initialize mint A and B", async () => {
     mintA = await createMint(connection, wallet.payer, provider.publicKey, null, 9);
@@ -95,7 +102,7 @@ describe("anchor-escrow-q3-2025", () => {
     console.log("\nMake instruction executed");
     console.log("Your transaction signature", tx);
     console.log("Vault balance", (await connection.getTokenAccountBalance(vault)).value.amount);
-    console.log("Maker balance", (await connection.getTokenAccountBalance(makerAtaA)).value.amount);
+    console.log("Maker ATA A balance", (await connection.getTokenAccountBalance(makerAtaA)).value.amount);
   });
 
   it("Take", async () => {
@@ -116,10 +123,10 @@ describe("anchor-escrow-q3-2025", () => {
         tokenProgram,
         systemProgram: SystemProgram.programId,
       })
+      .signers([taker])
       .rpc();
     console.log("\Take instruction executed");
     console.log("Your transaction signature", tx);
-    console.log("Vault balance", (await connection.getTokenAccountBalance(vault)).value.amount);
     console.log("Maker ATA A balance", (await connection.getTokenAccountBalance(makerAtaA)).value.amount);
     console.log("Maker ATA B balance", (await connection.getTokenAccountBalance(makerAtaB)).value.amount);
     console.log("Taker ATA A balance", (await connection.getTokenAccountBalance(takerAtaA)).value.amount);
