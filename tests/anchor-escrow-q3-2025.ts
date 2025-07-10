@@ -70,11 +70,11 @@ describe("anchor-escrow-q3-2025", () => {
   it("Mint to maker and taker", async () => {
     const tx = await mintTo(connection, wallet.payer, mintA, makerAtaA, wallet.payer, 100000000000);
     console.log("\nMint to maker", tx);
-    console.log("Maker balance", (await connection.getTokenAccountBalance(makerAtaA)).value.amount);
+    console.log("Maker ATA A balance", (await connection.getTokenAccountBalance(makerAtaA)).value.amount);
 
     const tx2 = await mintTo(connection, wallet.payer, mintB, takerAtaB, wallet.payer, 100000000000);
     console.log("\nMint to taker", tx2);
-    console.log("Taker balance", (await connection.getTokenAccountBalance(takerAtaB)).value.amount);
+    console.log("Taker ATA B balance", (await connection.getTokenAccountBalance(takerAtaB)).value.amount);
   })
 
   it("Make", async () => {
@@ -98,5 +98,32 @@ describe("anchor-escrow-q3-2025", () => {
     console.log("Maker balance", (await connection.getTokenAccountBalance(makerAtaA)).value.amount);
   });
 
+  it("Take", async () => {
+    // Add your test here.
+    const tx = await program.methods
+      .take()
+      .accountsPartial({
+        maker: provider.publicKey,
+        taker: taker.publicKey,
+        mintA,
+        mintB,
+        makerAtaA,
+        makerAtaB,
+        takerAtaA,
+        takerAtaB,
+        vault,
+        escrow,
+        tokenProgram,
+        systemProgram: SystemProgram.programId,
+      })
+      .rpc();
+    console.log("\Take instruction executed");
+    console.log("Your transaction signature", tx);
+    console.log("Vault balance", (await connection.getTokenAccountBalance(vault)).value.amount);
+    console.log("Maker ATA A balance", (await connection.getTokenAccountBalance(makerAtaA)).value.amount);
+    console.log("Maker ATA B balance", (await connection.getTokenAccountBalance(makerAtaB)).value.amount);
+    console.log("Taker ATA A balance", (await connection.getTokenAccountBalance(takerAtaA)).value.amount);
+    console.log("Taker ATA B balance", (await connection.getTokenAccountBalance(takerAtaB)).value.amount);
+  });
 
 });
