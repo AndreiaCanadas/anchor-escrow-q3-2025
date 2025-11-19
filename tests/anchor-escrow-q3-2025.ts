@@ -114,7 +114,6 @@ describe("anchor-escrow-q3-2025", () => {
         taker: taker.publicKey,
         mintA,
         mintB,
-        makerAtaA,
         makerAtaB,
         takerAtaA,
         takerAtaB,
