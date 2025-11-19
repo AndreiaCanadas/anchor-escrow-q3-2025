@@ -1,6 +1,7 @@
 # Anchor Escrow Q3 2025
 
-This program implements an escrow contract compatible with both SPL Token and SPL Token 2022, utilizing the TokenInterface for flexibility. 
+This program implements an escrow contract compatible with both SPL Token and SPL Token 2022, using the TokenInterface for flexibility.
+
 A maker creates an escrow by depositing a specified amount (`amount_a`) of tokens of type `mint_a` into a secure vault. In return, the maker requests a certain amount (`amount_b`) of tokens of type `mint_b`. Any taker can fulfill the escrow by providing the required `mint_b` tokens, upon which they will atomically receive the vaulted `mint_a` tokens in exchange.
 Note: In this implementation, both tokens must be issued by the same token program. If you want an example that can have token swap from different programs, see: https://github.com/AndreiaCanadas/anchor-escrow-interface.
 
